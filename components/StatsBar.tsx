@@ -31,11 +31,12 @@ async function fetchStats(): Promise<Stats> {
 
 export default async function StatsBar() {
   const stats = await fetchStats();
+  const order = readGameOrder();
 
   const items = [
     { label: "Games in Library", value: stats.totalGames.toLocaleString(), icon: "🎮" },
     { label: "Hours Played", value: stats.totalHours.toLocaleString(), icon: "⏱️" },
-    { label: "In Queue", value: "—", icon: "📋" },
+    { label: "In Queue", value: order.queue.length.toLocaleString(), icon: "📋" },
   ];
 
   return (

@@ -45,13 +45,18 @@ export interface GameWithAchievements extends SteamGame {
   isRecentlyPlayed: boolean;
 }
 
-export async function resolveSteamId(vanityUrl: string): Promise<string> {
-  const cacheKey = `vanity:${vanityUrl}`;
+export async function resolveSteamId(vanityOrId: string): Promise<string> {
+  // If we were already given a 17-digit SteamID64, use it directly.
+  if (/^\d{17}$/.test(vanityOrId)) {
+    return vanityOrId;
+  }
+
+  const cacheKey = `vanity:${vanityOrId}`;
   const cached = getCached<string>(cacheKey);
   if (cached) return cached;
 
   const apiKey = process.env.STEAM_API_KEY;
-  const url = `${STEAM_API_BASE}/ISteamUser/ResolveVanityURL/v1/?key=${apiKey}&vanityurl=${vanityUrl}`;
+  const url = `${STEAM_API_BASE}/ISteamUser/ResolveVanityURL/v1/?key=${apiKey}&vanityurl=${vanityOrId}`;
   const res = await fetch(url);
   const data = await res.json();
 
